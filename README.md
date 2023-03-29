@@ -1,66 +1,522 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Database for our project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
+>We have to use make models for each table with the following command so we can have migration files at the same time. 
+`Model name is basically the name of the table.`
+```
+php artisan make:model [modelname] -m
+```
+>run this command to see helping commands while making model 
+```
+php artisan make:model --help 
+```
+<hr>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```sql
+CREATE DATABASE university_connect;
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+USE university_connect;
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+CREATE TABLE `users` (
+    `u_id` bigint(20) UNSIGNED NOT NULL,
+    `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `email` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+CREATE TABLE faculty (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    areas_of_expertise VARCHAR(255),
+    office_hours VARCHAR(255),
+    contact_info VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+CREATE TABLE jobs (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    job_title VARCHAR(255) NOT NULL,
+    job_description TEXT,
+    application_info TEXT,
+    time_limitation INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+CREATE TABLE job_applications (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    job_id INT UNSIGNED NOT NULL,
+    user_id INT UNSIGNED NOT NULL,
+    cv_path VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (job_id) REFERENCES jobs(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
-## Laravel Sponsors
+CREATE TABLE events (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    event_title VARCHAR(255) NOT NULL,
+    event_date DATE,
+    event_time TIME,
+    event_location VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+CREATE TABLE posts (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    post_content TEXT NOT NULL,
+    post_category ENUM('general', 'job', 'event') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
 
-### Premium Partners
+CREATE TABLE cv_templates (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    template_name VARCHAR(255) NOT NULL,
+    template_format VARCHAR(255) NOT NULL,
+    template_path VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
 
-## Contributing
+CREATE TABLE `awards` (
+    `awd_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `award_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `date_received` date NOT NULL,
+    `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+-- --------------------------------------------------------
 
-## Code of Conduct
+--
+-- Table structure for table `certifications`
+--
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+CREATE TABLE `certifications` (
+    `cert_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `certification_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `issuing_organization` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `credentials` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `expiration_date` date NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-## Security Vulnerabilities
+-- --------------------------------------------------------
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+--
+-- Table structure for table `contacts`
+--
 
-## License
+CREATE TABLE `contacts` (
+    `c_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `email` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `phone` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `education`
+--
+
+CREATE TABLE `education` (
+    `ed_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `institution` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `degree` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `field_of_study` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `graduation_date` date NOT NULL,
+    `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `experiences`
+--
+
+CREATE TABLE `experiences` (
+    `e_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `company` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `position` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `start_date` date NOT NULL,
+    `end_date` date DEFAULT NULL,
+    `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+CREATE TABLE `interests` (
+    `i_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `interest_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `date_received` date NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+
+CREATE TABLE `personalinfos` (
+    `pinfo_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `fathersName` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `mothersName` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `image_path` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `dob` date NOT NULL,
+    `nationalId` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `address` text COLLATE utf8mb4_unicode_ci NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+CREATE TABLE `projects` (
+    `p_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `project_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+    `start_date` date NOT NULL,
+    `end_date` date DEFAULT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+CREATE TABLE `publications` (
+    `pub_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `publisher` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `publication_date` date NOT NULL,
+    `link` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `citation` text COLLATE utf8mb4_unicode_ci NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+CREATE TABLE `skills` (
+    `sk_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `skill_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `proficiency` int(11) NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+
+CREATE TABLE `testimonials` (
+    `te_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `source` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `date_received` date NOT NULL,
+    `phone` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `quote` text COLLATE utf8mb4_unicode_ci NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+
+
+
+CREATE TABLE `volunteer_works` (
+    `vol_id` bigint(20) UNSIGNED NOT NULL,
+    `user_id` bigint(20) UNSIGNED NOT NULL,
+    `organization` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `role` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `start_date` date NOT NULL,
+    `end_date` date NOT NULL,
+    `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `awards`
+--
+ALTER TABLE `awards`
+ADD PRIMARY KEY (`awd_id`),
+ADD KEY `awards_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `certifications`
+--
+ALTER TABLE `certifications`
+ADD PRIMARY KEY (`cert_id`),
+ADD KEY `certifications_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `contacts`
+--
+ALTER TABLE `contacts`
+ADD PRIMARY KEY (`c_id`),
+ADD KEY `contacts_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `education`
+--
+ALTER TABLE `education`
+ADD PRIMARY KEY (`ed_id`),
+ADD KEY `education_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `experiences`
+--
+ALTER TABLE `experiences`
+ADD PRIMARY KEY (`e_id`),
+ADD KEY `experiences_user_id_foreign` (`user_id`);
+
+
+--
+-- Indexes for table `interests`
+--
+ALTER TABLE `interests`
+ADD PRIMARY KEY (`i_id`),
+ADD KEY `interests_user_id_foreign` (`user_id`);
+
+
+--
+-- Indexes for table `personalinfos`
+--
+ALTER TABLE `personalinfos`
+ADD PRIMARY KEY (`pinfo_id`),
+ADD KEY `personalinfos_user_id_foreign` (`user_id`);
+
+
+--
+-- Indexes for table `projects`
+--
+ALTER TABLE `projects`
+ADD PRIMARY KEY (`p_id`),
+ADD KEY `projects_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `publications`
+--
+ALTER TABLE `publications`
+ADD PRIMARY KEY (`pub_id`),
+ADD KEY `publications_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `skills`
+--
+ALTER TABLE `skills`
+ADD PRIMARY KEY (`sk_id`),
+ADD KEY `skills_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `testimonials`
+--
+ALTER TABLE `testimonials`
+ADD PRIMARY KEY (`te_id`),
+ADD KEY `testimonials_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+ADD PRIMARY KEY (`u_id`);
+
+--
+-- Indexes for table `volunteer_works`
+--
+ALTER TABLE `volunteer_works`
+ADD PRIMARY KEY (`vol_id`),
+ADD KEY `volunteer_works_user_id_foreign` (`user_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `awards`
+--
+ALTER TABLE `awards`
+MODIFY `awd_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `certifications`
+--
+ALTER TABLE `certifications`
+MODIFY `cert_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `contacts`
+--
+ALTER TABLE `contacts`
+MODIFY `c_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `education`
+--
+ALTER TABLE `education`
+MODIFY `ed_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `experiences`
+--
+ALTER TABLE `experiences`
+MODIFY `e_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `interests`
+--
+ALTER TABLE `interests`
+MODIFY `i_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+
+ALTER TABLE `personalinfos`
+MODIFY `pinfo_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+
+
+ALTER TABLE `projects`
+MODIFY `p_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+
+ALTER TABLE `publications`
+MODIFY `pub_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `skills`
+--
+ALTER TABLE `skills`
+MODIFY `sk_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `testimonials`
+--
+ALTER TABLE `testimonials`
+MODIFY `te_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+MODIFY `u_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `volunteer_works`
+--
+ALTER TABLE `volunteer_works`
+MODIFY `vol_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `awards`
+--
+ALTER TABLE `awards`
+ADD CONSTRAINT `awards_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `certifications`
+--
+ALTER TABLE `certifications`
+ADD CONSTRAINT `certifications_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `contacts`
+--
+ALTER TABLE `contacts`
+ADD CONSTRAINT `contacts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `education`
+--
+ALTER TABLE `education`
+ADD CONSTRAINT `education_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `experiences`
+--
+ALTER TABLE `experiences`
+ADD CONSTRAINT `experiences_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `interests`
+--
+ALTER TABLE `interests`
+ADD CONSTRAINT `interests_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `personalinfos`
+--
+ALTER TABLE `personalinfos`
+ADD CONSTRAINT `personalinfos_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `projects`
+--
+ALTER TABLE `projects`
+ADD CONSTRAINT `projects_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `publications`
+--
+ALTER TABLE `publications`
+ADD CONSTRAINT `publications_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `skills`
+--
+ALTER TABLE `skills`
+ADD CONSTRAINT `skills_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `testimonials`
+--
+ALTER TABLE `testimonials`
+ADD CONSTRAINT `testimonials_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `volunteer_works`
+--
+ALTER TABLE `volunteer_works`
+ADD CONSTRAINT `volunteer_works_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`u_id`) ON DELETE CASCADE;
+COMMIT;
+```
