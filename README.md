@@ -1,4 +1,5 @@
 ## Database for our project
+<a href="https://laravel.com/docs/10.x/readme">Click here to read Laravel Documentation</a>
 >We have to use make models for each table with the following command so we can have migration files at the same time. 
 `Model name is basically the name of the table.`
 ```
