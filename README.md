@@ -1,6 +1,4 @@
 ## Database for our project
-
-
 >We have to use make models for each table with the following command so we can have migration files at the same time. 
 `Model name is basically the name of the table.`
 ```
