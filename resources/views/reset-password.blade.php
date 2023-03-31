@@ -1,10 +1,10 @@
 @include('header')
 @extends('header')
 @push('title')
-    <title>Index</title>
+    <title>Reset Password</title>
 @endpush
 <div class="container pt-3">
-    Guest Page
+ Password reset form
  
 </div>
 

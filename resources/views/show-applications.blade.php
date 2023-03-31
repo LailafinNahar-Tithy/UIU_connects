@@ -1,10 +1,10 @@
 @include('header')
 @extends('header')
 @push('title')
-    <title>Index</title>
+    <title>Show application</title>
 @endpush
 <div class="container pt-3">
-    Guest Page
+   Show job applications
  
 </div>
 

@@ -1,10 +1,10 @@
 @include('header')
 @extends('header')
 @push('title')
-    <title>Index</title>
+    <title>Name of event</title>
 @endpush
 <div class="container pt-3">
-    Guest Page
+  Show the event where id will be in link
  
 </div>
 
