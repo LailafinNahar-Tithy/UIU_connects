@@ -1,3 +1,9 @@
+<h1> UIU_Connect    </h1>
+ This project is a web application designed to connect university students and faculty members. It allows users to create profiles, share information, post events, apply for jobs, and generate CVs.
+
+
+
+
 ## Database for our project
 <a href="https://laravel.com/docs/10.x/readme">Click here to read Laravel Documentation</a>
 >We have to use make models for each table with the following command so we can have migration files at the same time. 
